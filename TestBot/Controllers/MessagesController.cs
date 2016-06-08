@@ -25,10 +25,11 @@ namespace TestBot
                 if (message.Text.Equals("hi"))
                     return message.CreateReplyMessage("hello");
                 // calculate something for us to return
-                int length = (message.Text ?? string.Empty).Length;
+                SqlLogin db = new SqlLogin();
+                String reply = db.Select(message.Text);
 
                 // return our reply to the user
-                return message.CreateReplyMessage($"You sent {length} characters");
+                return message.CreateReplyMessage($"Result :\n {reply} ");
             }
             else
             {

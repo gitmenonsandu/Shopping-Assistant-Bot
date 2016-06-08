@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using MySql.Data.MySqlClient;
 using System.Diagnostics;
+using System.Data;
 
 namespace TestBot
 {
@@ -81,16 +82,12 @@ namespace TestBot
         }
 
         //Select statement
-        public List<string>[] Select()
+        public String Select(string inp)
         {
-            string query = "SELECT * FROM ItemTable";
+            string query = inp;
 
             //Create a list to store the result
-            List<string>[] list = new List<string>[3];
-            list[0] = new List<string>();
-            list[1] = new List<string>();
-            list[2] = new List<string>();
-
+            
             //Open connection
             if (this.OpenConnection() == true)
             {
@@ -98,15 +95,23 @@ namespace TestBot
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 //Create a data reader and Execute the command
                 MySqlDataReader dataReader = cmd.ExecuteReader();
+                DataTable table = dataReader.GetSchemaTable();
+
 
                 //Read the data and store them in the list
-                while (dataReader.Read())
+                String result="";
+                if(dataReader.HasRows)
                 {
-                    list[0].Add(dataReader["id"] + "");
-                    list[1].Add(dataReader["name"] + "");
-                    list[2].Add(dataReader["age"] + "");
+                    while(dataReader.Read())
+                    {
+                        for (int i = 0; i < dataReader.FieldCount; ++i)
+                        {
+                            result += dataReader.GetValue(i).ToString();
+                            result += " - ";
+                        }
+                    }
+                    result += "\n";
                 }
-
                 //close Data Reader
                 dataReader.Close();
 
@@ -114,11 +119,11 @@ namespace TestBot
                 this.CloseConnection();
 
                 //return list to be displayed
-                return list;
+                return result;
             }
             else
             {
-                return list;
+                return null;
             }
         }
     }
