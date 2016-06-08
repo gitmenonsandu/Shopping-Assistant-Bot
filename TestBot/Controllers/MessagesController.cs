@@ -22,6 +22,8 @@ namespace TestBot
         {
             if (message.Type == "Message")
             {
+                if (message.Text.Equals("hi"))
+                    return message.CreateReplyMessage("hello");
                 // calculate something for us to return
                 int length = (message.Text ?? string.Empty).Length;
 
