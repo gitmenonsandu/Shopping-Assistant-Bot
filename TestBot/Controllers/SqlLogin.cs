@@ -95,7 +95,6 @@ namespace TestBot
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 //Create a data reader and Execute the command
                 MySqlDataReader dataReader = cmd.ExecuteReader();
-                DataTable table = dataReader.GetSchemaTable();
 
 
                 //Read the data and store them in the list
@@ -124,6 +123,32 @@ namespace TestBot
             else
             {
                 return null;
+            }
+        }
+
+        //Count statement
+        public int Count(string inp)
+        {
+            string query = inp;
+            int Count = -1;
+
+            //Open Connection
+            if (this.OpenConnection() == true)
+            {
+                //Create Mysql Command
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                //ExecuteScalar will return one value
+                Count = int.Parse(cmd.ExecuteScalar() + "");
+
+                //close Connection
+                this.CloseConnection();
+
+                return Count;
+            }
+            else
+            {
+                return Count;
             }
         }
     }
