@@ -25,8 +25,10 @@ namespace TestBot
                 if (message.Text.Equals("hi"))
                     return message.CreateReplyMessage("hello");
                 // calculate something for us to return
+               
                 SqlLogin db = new SqlLogin();
                 String reply = db.Select(message.Text);
+
 
                 // return our reply to the user
                 return message.CreateReplyMessage($"Result :\n {reply} ");
