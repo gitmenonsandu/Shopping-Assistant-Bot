@@ -28,7 +28,7 @@ namespace TestBot
             server = "localhost";
             database = "shoppingmall";
             uid = "root";
-            password = "1996";
+            password = "1234";
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
