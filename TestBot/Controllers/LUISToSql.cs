@@ -19,6 +19,24 @@ namespace TestBot.Controllers
                 {
                     case "ItemNameWithPrice":
                         SqlQuery = LuisQuery.intents[0].intent;
+                        flag = true;/*
+                        for (int i = 0; i < LuisQuery.entities.Length; ++i)
+                            if (LuisQuery.entities[i].type.Equals("item"))
+                            {
+                                SqlQuery = "select * from ItemTable;";
+                                break;
+                            }
+                            else if (LuisQuery.entities[i].type.Equals("item::Name"))
+                            {
+                                if (flag)
+                                {
+                                    SqlQuery = "select * from ItemTable where lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
+                                    flag = false;
+                                }
+                                else
+                                    SqlQuery = SqlQuery + " or lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
+                            }
+                        SqlQuery += ";";*/
                         break;
                     case "ItemWithOffer":
                         SqlQuery = LuisQuery.intents[0].intent;
@@ -28,6 +46,7 @@ namespace TestBot.Controllers
                         break;
                     case "ItemName":
                         SqlQuery = LuisQuery.intents[0].intent;
+                        flag = true;
                         for (int i = 0; i < LuisQuery.entities.Length; ++i)
                             if (LuisQuery.entities[i].type.Equals("item"))
                             {
