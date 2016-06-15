@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace TestBot
+namespace TestBot.Controllers
 {
     public class SqlLogin
     {

@@ -112,6 +112,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\luis.cs" />
     <Compile Include="Controllers\luisController.cs" />
+    <Compile Include="Controllers\LUISToSql.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\SqlLogin.cs" />
     <Compile Include="Global.asax.cs">
