@@ -31,7 +31,7 @@ namespace TestBot.Controllers
                     what = DefaultAlarmWhat;
                 }
                 return this.alarmByWhat.TryGetValue(what, out alarm);
-            }
+            }  
             public const string Entity_Alarm_Title = "builtin.alarm.title";
             public const string Entity_Alarm_Start_Time = "builtin.alarm.start_time";
             public const string Entity_Alarm_Start_Date = "builtin.alarm.start_date";

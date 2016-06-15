@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
+using System.Diagnostics;
 
 namespace TestBot
 {
@@ -60,19 +61,65 @@ namespace TestBot
         {
             if (message.Type == "Message")
             {
+                String reply = String.Empty;
+                String SqlQuery = String.Empty;
                 if (message.Text.Equals("hi"))
                     return message.CreateReplyMessage("hello");
+
+                Rootobject LuisQuery = await LUISClient.ParseUserInput(message.Text);
                 
+                if(LuisQuery.intents.Length>0)
+                {
+                    switch(LuisQuery.intents[0].intent)
+                    {
+                        case "ItemNameWithPrice":
+                            SqlQuery=LuisQuery.intents[0].intent;
+                            break;
+                        case "ItemWithOffer":
+                            SqlQuery=LuisQuery.intents[0].intent;
+                            break;
+                        case "Offer":
+                            SqlQuery=LuisQuery.intents[0].intent;
+                            break;
+                        case "ItemName":
+                            SqlQuery=LuisQuery.intents[0].intent;
+                            for (int i = 0; i < LuisQuery.entities.Length; ++i)
+                                if (LuisQuery.entities[i].type.Equals("item"))
+                                {
+                                    SqlQuery = "select * from ItemTable;";
+                                    break;
+                                }
+                                else if (LuisQuery.entities[i].type.Equals("item::Name"))
+                                {
+                                    SqlQuery = "select * from ItemTable where lower(itemName)='" + LuisQuery.entities[i].entity.ToLower()+"';";
+                                    break;
+                                }
 
-                if (message.Text.Contains("luis"))
-                    return await Conversation.SendAsync(message, () => new EchoDialog());
-
+                            break;
+                        case "ItemNameWithDiscount":
+                            SqlQuery=LuisQuery.intents[0].intent;
+                            break;
+                        case "None":
+                            SqlQuery=LuisQuery.intents[0].intent;
+                            break;
+                        default:
+                            SqlQuery=LuisQuery.intents[0].intent;
+                            break;
+                    }
+                }
+                Debug.WriteLine(reply);
+                Debug.WriteLine(SqlQuery);
                 SqlLogin db = new SqlLogin();
-                String reply = db.Select(message.Text);
-
+                try {
+                    reply = db.Select(SqlQuery);
+                }
+                catch(Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
 
                 // return our reply to the user
-                return message.CreateReplyMessage($"Result :\n {reply} ");
+                return message.CreateReplyMessage($"Result :\n {reply} \n {SqlQuery}");
             }
             else
             {
