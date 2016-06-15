@@ -9,10 +9,10 @@ namespace TestBot.Controllers
 {
     public class LUISToSql
     {
-        Rootobject LuisQuery;
         public String SqlQuery,reply;
         public void initQuery(Rootobject LuisQuery)
         {
+            bool flag = true;
             if (LuisQuery.intents.Length > 0)
             {
                 switch (LuisQuery.intents[0].intent)
@@ -36,9 +36,15 @@ namespace TestBot.Controllers
                             }
                             else if (LuisQuery.entities[i].type.Equals("item::Name"))
                             {
-                                SqlQuery = "select * from ItemTable where lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%';";
-                                break;
+                                if (flag)
+                                {
+                                    SqlQuery = "select * from ItemTable where lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
+                                    flag = false;
+                                }
+                                else
+                                    SqlQuery=SqlQuery+" or lower(itemName) like '%"+ LuisQuery.entities[i].entity.ToLower() + "%'";
                             }
+                        SqlQuery += ";";
 
                         break;
                     case "ItemNameWithDiscount":
