@@ -33,11 +33,17 @@ namespace TestBot.Controllers
                                     if (!(LuisQuery.entities[i].entity.ToLower().Contains("item")))
                                     {
                                         SqlQuery = SqlQuery + " where lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
+                                        string singular = LuisQuery.entities[i].entity.ToLower();
+                                        if (singular.Last() == 's')
+                                        {
+                                            singular = singular.Remove(singular.Length - 1);
+                                            SqlQuery = SqlQuery + " or lower(itemName) like '%" + singular + "%'";
+                                        }
                                         flag = false;
                                     }
                                 }
                                 else
-                                    SqlQuery = SqlQuery + " or where lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
+                                    SqlQuery = SqlQuery + " or lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
                             }
                             else if (LuisQuery.entities[i].type.Equals("compare::less than"))
                                 compare = "<=";
@@ -53,7 +59,7 @@ namespace TestBot.Controllers
                             if (flag)
                                 SqlQuery = SqlQuery + " where itemPrice" + compare + cost.ToString();
                             else
-                                SqlQuery = SqlQuery + "and itemPrice" + compare + cost.ToString();
+                                SqlQuery = SqlQuery + " and itemPrice" + compare + cost.ToString();
                         }
                         SqlQuery += ";";
                         break;

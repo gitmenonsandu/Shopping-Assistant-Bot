@@ -109,6 +109,7 @@ namespace TestBot.Controllers
                             result += dataReader.GetValue(i).ToString();
                             result += " - ";
                         }
+                        result += "\n";
                     }
                     result += "\n";
                 }
