@@ -19,7 +19,7 @@ namespace TestBot
             //Debug.WriteLine(strEscaped);
             using (var client = new HttpClient())
             {
-                string uri = "https://api.projectoxford.ai/luis/v1/application?id=008b2fd2-fb63-4ce8-af18-b2726b2bbbca&subscription-key=8e313738104945008db930cb54f355a7&q="+strEscaped;
+                string uri = "https://api.projectoxford.ai/luis/v1/application?id=be32716c-0d3f-4df6-bacf-bf809547d67a&subscription-key=8e313738104945008db930cb54f355a7&q=" + strEscaped;
                 HttpResponseMessage msg = await client.GetAsync(uri);
                 if (msg.IsSuccessStatusCode)
                 {
