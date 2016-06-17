@@ -121,7 +121,6 @@ namespace TestBot.Controllers
                         break;
                 }
                 int brackets=SqlQuery.Count(x=>x.Equals('(')) - SqlQuery.Count(x=>x.Equals(')'));
-                Debug.WriteLine(brackets);
 
                 for (int b = 0; b < brackets; ++b)
                     SqlQuery = SqlQuery.Insert(SqlQuery.Length - 1, ")");
