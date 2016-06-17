@@ -39,15 +39,12 @@ namespace TestBot.Controllers
                         whereOr = " where";
                         type.Clear();
                         int cost = -3;
-                        //Array.Sort(LuisResponse.entities, delegate (Rootobject x, Rootobject y) { return x}
-
                         
                         LuisResponse.Entities= LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
-                        //Debug.WriteLine(LuisResponse.Entities);
+
 
                         for (int i = 0; i < LuisResponse.Entities.Count(); ++i)
                         {
-                            Debug.WriteLine(LuisResponse.Entities[i].Entity+LuisResponse.Entities[i].StartIndex);
                             if (LuisResponse.Entities[i].Type.Equals("item::name") || LuisResponse.Entities[i].Type.Equals("item"))
                             {
                                     if (!(LuisResponse.Entities[i].Entity.ToLower().Contains("item")))
@@ -60,8 +57,13 @@ namespace TestBot.Controllers
 
                                         }
                                             itemName = itemType + LuisResponse.Entities[i].Entity.ToLower();
-                                            SqlQuery = SqlQuery + whereOr + " lower(itemName) like '%" + itemName + "%'";
+                                            if(whereOr==" where")
+                                                SqlQuery = SqlQuery + whereOr + " (lower(itemName) like '%" + itemName + "%'";
+                                            else
+                                                SqlQuery = SqlQuery + whereOr + " lower(itemName) like '%" + itemName + "%'";
+
                                             whereOr = " or";
+                                            flag = false;
                                             string singular = LuisResponse.Entities[i].Entity.ToLower();
                                             if (singular.Last() == 's')
                                             {
@@ -100,8 +102,12 @@ namespace TestBot.Controllers
                                 type.Add(LuisResponse.Entities[i].Entity.ToLower());
                         }
                         if (costFlag && compare.Length != 0)
-                            SqlQuery = SqlQuery + whereOr+" itemPrice" + compare + cost.ToString();
-                        
+                        {
+                            if (flag)
+                                SqlQuery = SqlQuery + " where itemPrice" + compare + cost.ToString();
+                            else
+                                SqlQuery = SqlQuery + ") and itemPrice" + compare + cost.ToString();
+                        }
                         SqlQuery += ";";
                         break;
                     case "itemByCategory":
@@ -114,6 +120,13 @@ namespace TestBot.Controllers
                         SqlQuery = LuisResponse.Intents[0].Intent;
                         break;
                 }
+                int brackets=SqlQuery.Count(x=>x.Equals('(')) - SqlQuery.Count(x=>x.Equals(')'));
+                Debug.WriteLine(brackets);
+
+                for (int b = 0; b < brackets; ++b)
+                    SqlQuery = SqlQuery.Insert(SqlQuery.Length - 1, ")");
+                    
+
             }
            // Debug.WriteLine(SqlQuery + " 3hi");
         }
