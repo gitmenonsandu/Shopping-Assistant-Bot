@@ -5,6 +5,8 @@ using System.Web.Http;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
 using System.Diagnostics;
+using Microsoft.Bot.Builder.Luis;
+using Microsoft.Bot.Builder.Luis.Models;
 using TestBot.Controllers;
 namespace TestBot
 {
@@ -25,9 +27,12 @@ namespace TestBot
                 if (message.Text.Equals("hi"))
                     return message.CreateReplyMessage("hello");
 
-                Rootobject LuisQuery = await LUISClient.ParseUserInput(message.Text);
+                //Rootobject LuisQuery = await LUISClient.ParseUserInput(message.Text);
                 LUISToSql lReply = new LUISToSql();
-                reply = lReply.QueryToData(LuisQuery);
+                LuisModelAttribute shoppingModel = new LuisModelAttribute("be32716c-0d3f-4df6-bacf-bf809547d67a", "8e313738104945008db930cb54f355a7");
+                LuisService shoppingService = new LuisService(shoppingModel);
+                LuisResult LuisResponse = await shoppingService.QueryAsync(message.Text);
+                reply = lReply.QueryToData(LuisResponse);
 
                 // return our reply to the user
                 return message.CreateReplyMessage($"Result :\n {reply} \n {lReply.SqlQuery}");

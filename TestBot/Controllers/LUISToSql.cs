@@ -4,36 +4,47 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-
+using Microsoft.Bot.Builder.Luis;
+using Microsoft.Bot.Builder.Luis.Models;
 namespace TestBot.Controllers
 {
     public class LUISToSql
     {
+        public LUISToSql()
+        {
+
+        }
         public String SqlQuery,reply;
-        public void initQuery(Rootobject LuisQuery)
+        //converting LUIS response to SQL query
+        public void initQuery(LuisResult LuisResponse)
         {
             bool flag = true;
             string compare = string.Empty;
-            if (LuisQuery.intents.Length > 0)
+            
+            if (LuisResponse.Intents.Count > 0)
             {
-                switch (LuisQuery.intents[0].intent)
+                IntentRecommendation bestResponse = LuisResponse.Intents.ElementAt(0);
+                switch (LuisResponse.Intents[0].Intent)
                 {
                     case "itemByPrice":
                         SqlQuery = "select itemName,itemPrice,itemDiscount from ItemTable";
                         flag = true;
                         bool costFlag = false;
                         compare = string.Empty;
-                        int cost=-3;
-                        for (int i = 0; i < LuisQuery.entities.Length; ++i)
+                        int cost = -3;
+                        Debug.WriteLine(LuisResponse.Entities.Count() + " 1hi");
+                        //Array.Sort(LuisResponse.entities, delegate (Rootobject x, Rootobject y) { return x}
+                        for (int i = 0; i < LuisResponse.Entities.Count(); ++i)
                         {
-                            if (LuisQuery.entities[i].type.Equals("item::name") || LuisQuery.entities[i].type.Equals("item"))
+                            
+                            if (LuisResponse.Entities[i]. Type.Equals("item::name") || LuisResponse.Entities[i].Type.Equals("item"))
                             {
                                 if (flag)
                                 {
-                                    if (!(LuisQuery.entities[i].entity.ToLower().Contains("item")))
+                                    if (!(LuisResponse.Entities[i].Entity.ToLower().Contains("item")))
                                     {
-                                        SqlQuery = SqlQuery + " where lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
-                                        string singular = LuisQuery.entities[i].entity.ToLower();
+                                        SqlQuery = SqlQuery + " where lower(itemName) like '%" + LuisResponse.Entities[i].Entity.ToLower() + "%'";
+                                        string singular = LuisResponse.Entities[i].Entity.ToLower();
                                         if (singular.Last() == 's')
                                         {
                                             singular = singular.Remove(singular.Length - 1);
@@ -43,16 +54,16 @@ namespace TestBot.Controllers
                                     }
                                 }
                                 else
-                                    SqlQuery = SqlQuery + " or lower(itemName) like '%" + LuisQuery.entities[i].entity.ToLower() + "%'";
+                                    SqlQuery = SqlQuery + " or lower(itemName) like '%" + LuisResponse.Entities[i].Entity.ToLower() + "%'";
                             }
-                            else if (LuisQuery.entities[i].type.Equals("compare::less than"))
+                            else if (LuisResponse.Entities[i].Type.Equals("compare::less than"))
                                 compare = "<=";
-                            else if (LuisQuery.entities[i].type.Equals("compare::greater than"))
+                            else if (LuisResponse.Entities[i].Type.Equals("compare::greater than"))
                                 compare = ">=";
-                            else if (LuisQuery.entities[i].type.Equals("compare::equal to"))
+                            else if (LuisResponse.Entities[i].Type.Equals("compare::equal to"))
                                 compare = "=";
-                            else if (LuisQuery.entities[i].type.Equals("builtin.number"))
-                                costFlag = int.TryParse(LuisQuery.entities[i].entity, out cost);
+                            else if (LuisResponse.Entities[i].Type.Equals("builtin.number"))
+                                costFlag = int.TryParse(LuisResponse.Entities[i].Entity, out cost);
                         }
                         if (costFlag && compare.Length != 0)
                         {
@@ -64,23 +75,24 @@ namespace TestBot.Controllers
                         SqlQuery += ";";
                         break;
                     case "itemByCategory":
-                        SqlQuery = LuisQuery.intents[0].intent;
+                        SqlQuery = LuisResponse.Intents[0].Intent;
                         break;
                     case "None":
-                        SqlQuery = LuisQuery.intents[0].intent;
+                        SqlQuery = LuisResponse.Intents[0].Intent;
                         break;
                     default:
-                        SqlQuery = LuisQuery.intents[0].intent;
+                        SqlQuery = LuisResponse.Intents[0].Intent;
                         break;
                 }
             }
-            //Debug.WriteLine(SqlQuery + "3hi");
+           // Debug.WriteLine(SqlQuery + " 3hi");
         }
-        public string QueryToData(Rootobject LuisQuery)
+        //executing SqlQuery
+        public string QueryToData(LuisResult LuisQuery)
         {
-            //Debug.WriteLine(SqlQuery+"2hi");
             initQuery(LuisQuery);
-            if (SqlQuery.Last()!=';')
+
+            if (SqlQuery.Last() != ';')
                 reply = "Sorry. I didnt get that\n";
             else {
                 SqlLogin db = new SqlLogin();
@@ -91,7 +103,6 @@ namespace TestBot.Controllers
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.Message);
                     reply = "Sorry. I didnt get that\n";
                 }
             }

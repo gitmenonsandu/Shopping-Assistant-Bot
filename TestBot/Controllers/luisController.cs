@@ -8,17 +8,21 @@ using System.Threading.Tasks;
 using System.Web;
 using TestBot.Controllers;
 
-namespace TestBot
+namespace TestBot.Http
 {
+
+    //class to connect LUIS model via HTTP requests
     public class LUISClient
     {
+        //input is the dialogue entered by the user
         public static async Task<Rootobject> ParseUserInput(string input)
         {
             string strRet = string.Empty;
+            //input converted to URL format
             string strEscaped = Uri.EscapeDataString(input);
-            //Debug.WriteLine(strEscaped);
             using (var client = new HttpClient())
             {
+                //input attached to the end of LUIS model URL
                 string uri = "https://api.projectoxford.ai/luis/v1/application?id=be32716c-0d3f-4df6-bacf-bf809547d67a&subscription-key=8e313738104945008db930cb54f355a7&q=" + strEscaped;
                 HttpResponseMessage msg = await client.GetAsync(uri);
                 if (msg.IsSuccessStatusCode)
@@ -32,6 +36,7 @@ namespace TestBot
             return null;
         }
     }
+    //to store the json response from the LUIS model
     public class Rootobject
     {
         public string query { get; set; }
@@ -65,7 +70,7 @@ namespace TestBot
         public string type { get; set; }
         public float score { get; set; }
     }
-
+    //entities of json model
     public class Entity
     {
         public string entity { get; set; }
