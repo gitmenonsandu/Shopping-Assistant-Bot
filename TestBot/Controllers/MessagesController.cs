@@ -34,7 +34,7 @@ namespace TestBot
                 reply = lReply.QueryToData(LuisResponse);
 
                 // return our reply to the user
-                return message.CreateReplyMessage($"Result :\n {reply} \n {lReply.SqlQuery}");
+                return message.CreateReplyMessage($"Result :\n {reply}");
             }
             else
             {

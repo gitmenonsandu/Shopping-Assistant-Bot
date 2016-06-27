@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
+
 namespace TestBot.Controllers
 {
     public class LUISToSql
@@ -64,13 +62,13 @@ namespace TestBot.Controllers
 
                                     }
                                     itemName = itemType + LuisResponse.Entities[i].Entity.ToLower();
-
+                                     
                                     SqlQuery = SqlQuery + whereOr + $" (lower({colName}) like '%" + itemName + "%'";
 
                                     whereOr = " or";
                                     flag = false;
                                     string singular = LuisResponse.Entities[i].Entity.ToLower();
-                                    if (singular.Last() == 's')
+                                    if (singular.Last() == 's') 
                                     {
                                         singular = singular.Remove(singular.Length - 1);
                                         itemName = itemType + singular;
@@ -130,7 +128,7 @@ namespace TestBot.Controllers
 
 
             }
-            // Debug.WriteLine(SqlQuery + " 3hi");
+            //Debug.WriteLine(SqlQuery + " 3hi");
         }
         //executing SqlQuery
         public string QueryToData(LuisResult LuisQuery)

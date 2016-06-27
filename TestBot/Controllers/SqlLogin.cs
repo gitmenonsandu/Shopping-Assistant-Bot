@@ -5,7 +5,7 @@ using System.Web;
 using MySql.Data.MySqlClient;
 using System.Diagnostics;
 using System.Data;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace TestBot.Controllers
 {
@@ -26,15 +26,17 @@ namespace TestBot.Controllers
         //Initialize values
         private void Initialize()
         {
-            server = "localhost";
-            database = "shoppingmall";
-            uid = "root";
-            password = "1234";
+            server = "us-cdbr-iron-east-04.cleardb.net";
+            database = "ad_5cf43fc752d1963  ";
+            uid = "ba4180b80f1d1a";
+            password = "fc43a0b1";
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
             connection = new MySqlConnection(connectionString);
+            
+            
         }
 
         //open connection to database
@@ -42,7 +44,9 @@ namespace TestBot.Controllers
         {
             try
             {
+                Debug.WriteLine("not connected");
                 connection.Open();
+                Debug.WriteLine("connected");
                 return true;
             }
             catch (MySqlException ex)
