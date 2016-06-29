@@ -8,6 +8,8 @@ using System.Diagnostics;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using TestBot.Controllers;
+using System.Device.Location;
+using GoogleMaps.LocationServices;
 namespace TestBot
 {
     [Serializable]
@@ -26,7 +28,6 @@ namespace TestBot
                 String reply = String.Empty;
                 if (message.Text.Equals("hi"))
                     return message.CreateReplyMessage("hello");
-
                 LUISToSql lReply = new LUISToSql();
                 LuisModelAttribute shoppingModel = new LuisModelAttribute("be32716c-0d3f-4df6-bacf-bf809547d67a", "8e313738104945008db930cb54f355a7");
                 LuisService shoppingService = new LuisService(shoppingModel);

@@ -87,19 +87,21 @@ namespace TestBot.Controllers
                         colName = string.Empty;
 
                         LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
-                        compare = "'";
+                        regex = "'";
                         for (int i = 0; i < LuisResponse.Entities.Count; ++i)
                         {
                             if (LuisResponse.Entities[i].Type.Equals("category") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia") || LuisResponse.Entities[i].Type.Equals("item::name"))
                             {
-                                if (i < LuisResponse.Entities.Count - 1)
-                                    compare = compare + LuisResponse.Entities[i].Entity.ToLower() + "|";
-                                else
-                                    compare = compare + LuisResponse.Entities[i].Entity.ToLower();
+                                regex = regex + LuisResponse.Entities[i].Entity.ToLower();
+                                regex += "|";
                             }
                         }
-                        compare += "'";
-                        SqlQuery = SqlQuery + " where lower(shopName) REGEXP " + compare + " or lower(shopCategory) REGEXP " + compare;
+                        if (regex.Length != 1)
+                        {
+                            regex = regex.Remove(regex.Length - 1);
+                            regex += "'";
+                            SqlQuery = SqlQuery + " where lower(shopName) REGEXP " + regex + " or lower(shopCategory) REGEXP " + regex;
+                        }
                         SqlQuery += ";";
                         break;
                     case "None":
