@@ -34,6 +34,9 @@ namespace TestBot
                 reply = lReply.QueryToData(LuisResponse);
 
                 // return our reply to the user
+                if (reply == null)
+                    return message.CreateReplyMessage($"sorry i do not understand");
+                
                 return message.CreateReplyMessage($"Result :\n {reply}");
             }
             else

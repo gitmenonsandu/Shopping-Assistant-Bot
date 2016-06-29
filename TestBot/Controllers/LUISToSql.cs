@@ -18,9 +18,6 @@ namespace TestBot.Controllers
         {
             bool flag = true;
             string compare = string.Empty;
-            string itemName = string.Empty;
-            string whereOr = string.Empty;
-            string itemType = string.Empty;
             string colName = string.Empty;
             List<string> type = new List<string>();
 
@@ -34,10 +31,10 @@ namespace TestBot.Controllers
                         flag = true;
                         bool costFlag = false;
                         compare = string.Empty;
-                        itemName = string.Empty;
-                        itemType = string.Empty;
+                        string itemName = string.Empty;
+                        string itemType = string.Empty;
                         colName = string.Empty;
-                        whereOr = " where";
+                        string whereOr = " where";
                         type.Clear();
                         int cost = -3;
 
@@ -55,7 +52,7 @@ namespace TestBot.Controllers
                                 if (!(LuisResponse.Entities[i].Entity.ToLower().Contains("item")))
                                 {
 
-                                    if (type.Count != 0)
+                                    if (type.Count != 0) 
                                     {
                                         itemType = type.First();
                                         itemType += " ";
@@ -113,7 +110,27 @@ namespace TestBot.Controllers
                         }
                         SqlQuery += ";";
                         break;
+                    case "getShop":
+                        SqlQuery = "SELECT shoptable.shopName,shoptable.shopRating,locationtable.locDesc FROM shoptable JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
+                        string shopName = string.Empty;
+                        colName = string.Empty;
 
+                        LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
+                        compare = "'";
+                        for(int i=0;i<LuisResponse.Entities.Count;++i)
+                        {
+                            if (LuisResponse.Entities[i].Type.Equals("category") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia") || LuisResponse.Entities[i].Type.Equals("item::name"))
+                            {
+                                if (i < LuisResponse.Entities.Count - 1)
+                                    compare = compare + LuisResponse.Entities[i].Entity.ToLower() + "|";
+                                else
+                                    compare = compare + LuisResponse.Entities[i].Entity.ToLower();
+                            }
+                        }
+                        compare += "'";
+                        SqlQuery = SqlQuery + " where lower(shopName) REGEXP " + compare + " or lower(shopCategory) REGEXP " + compare;
+                        SqlQuery += ";";
+                        break;
                     case "None":
                         SqlQuery = LuisResponse.Intents[0].Intent;
                         break;
@@ -134,7 +151,7 @@ namespace TestBot.Controllers
         public string QueryToData(LuisResult LuisQuery)
         {
             initQuery(LuisQuery);
-
+            Debug.WriteLine(SqlQuery);
             if (SqlQuery.Last() != ';')
                 reply = "Sorry. I didnt get that\n";
             else {

@@ -44,9 +44,7 @@ namespace TestBot.Controllers
         {
             try
             {
-                Debug.WriteLine("not connected");
                 connection.Open();
-                Debug.WriteLine("connected");
                 return true;
             }
             catch (MySqlException ex)
