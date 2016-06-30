@@ -31,6 +31,7 @@ namespace TestBot.Controllers
                         LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
 
                         string regex = "'";
+                        string shopRegex = "'";
                         string itemName = string.Empty;
                         bool costFlag = false;
                         compare = string.Empty;
@@ -40,12 +41,16 @@ namespace TestBot.Controllers
                         {
                             if (LuisResponse.Entities[i].Type.Equals("type"))
                                 type.Add(LuisResponse.Entities[i].Entity.ToLower());
-                            else if (LuisResponse.Entities[i].Type.Equals("item::name") || LuisResponse.Entities[i].Type.Equals("item") || LuisResponse.Entities[i].Type.Equals("category"))
+                            else if (LuisResponse.Entities[i].Type.Equals("item::name") || LuisResponse.Entities[i].Type.Equals("item") || LuisResponse.Entities[i].Type.Equals("category") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia"))
                             {
-
+                                if(LuisResponse.Entities[i].Type.Equals("category") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia"))
+                                {
+                                    shopRegex += LuisResponse.Entities[i].Entity;
+                                    shopRegex += "|";
+                                }  
                                 itemName = LuisResponse.Entities[i].Entity;
                                 if (itemName.Last() == 's')
-                                    itemName.Remove(itemName.Length - 1);
+                                    itemName=itemName.Remove(itemName.Length - 1);
                                 if (itemName.Contains("item"))
                                     itemName = string.Empty;
                                 if (type.Count == 0)
@@ -71,7 +76,14 @@ namespace TestBot.Controllers
                         {
                             regex = regex.Remove(regex.Length - 1);
                             regex += "'";
-                            SqlQuery = SqlQuery + " where (lower(itemName) REGEXP " + regex + " or lower(itemCategory) REGEXP " + regex + ")";
+                            SqlQuery = SqlQuery + " where (lower(itemTable.itemName) REGEXP " + regex + " or lower(itemTable.itemCategory) REGEXP " + regex  + ")";
+                            if (shopRegex.Length != 1)
+                            {
+                                shopRegex = shopRegex.Remove(shopRegex.Length - 1);
+                                shopRegex += "'";
+                                SqlQuery = SqlQuery + " and (lower(shopTable.shopName) REGEXP " + shopRegex + " or lower(shopTable.shopCategory) REGEXP " + shopRegex + ")";
+
+                            }
                             if (costFlag && compare.Length != 0)
                                 SqlQuery = SqlQuery + " and itemPrice " + compare + cost.ToString();
                         }
