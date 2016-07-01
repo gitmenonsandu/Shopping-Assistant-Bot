@@ -16,12 +16,11 @@ namespace TestBot.Controllers
         //converting LUIS response to SQL query
         public void initQuery(LuisResult LuisResponse)
         {
-            bool flag = true;
             string compare = string.Empty;
             string colName = string.Empty;
             List<string> type = new List<string>();
 
-            if (LuisResponse.Intents.Count > 0)
+            if (LuisResponse.Intents.Count > 0 && LuisResponse.Entities.Count > 0)
             {
                 switch (LuisResponse.Intents[0].Intent)
                 {
@@ -43,18 +42,21 @@ namespace TestBot.Controllers
                                 type.Add(LuisResponse.Entities[i].Entity.ToLower());
                             else if (LuisResponse.Entities[i].Type.Equals("item::name") || LuisResponse.Entities[i].Type.Equals("item") || LuisResponse.Entities[i].Type.Equals("category") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia"))
                             {
-                                if(LuisResponse.Entities[i].Type.Equals("category") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia"))
+                                if (LuisResponse.Entities[i].Type.Equals("category") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia"))
                                 {
                                     shopRegex += LuisResponse.Entities[i].Entity;
                                     shopRegex += "|";
-                                }  
+                                }
                                 itemName = LuisResponse.Entities[i].Entity;
                                 if (itemName.Last() == 's')
-                                    itemName=itemName.Remove(itemName.Length - 1);
+                                    itemName = itemName.Remove(itemName.Length - 1);
                                 if (itemName.Contains("item"))
                                     itemName = string.Empty;
                                 if (type.Count == 0)
+                                {
                                     regex = regex + itemName;
+                                    regex += "|";
+                                }
                                 while (type.Count != 0)
                                 {
                                     regex = regex + type.First() + " " + itemName;
@@ -76,7 +78,7 @@ namespace TestBot.Controllers
                         {
                             regex = regex.Remove(regex.Length - 1);
                             regex += "'";
-                            SqlQuery = SqlQuery + " where (lower(itemTable.itemName) REGEXP " + regex + " or lower(itemTable.itemCategory) REGEXP " + regex  + ")";
+                            SqlQuery = SqlQuery + " where (lower(itemTable.itemName) REGEXP " + regex + " or lower(itemTable.itemCategory) REGEXP " + regex + ")";
                             if (shopRegex.Length != 1)
                             {
                                 shopRegex = shopRegex.Remove(shopRegex.Length - 1);
@@ -125,6 +127,8 @@ namespace TestBot.Controllers
                 }
 
             }
+            else
+                SqlQuery = "no";
             //Debug.WriteLine(SqlQuery + " 3hi");
         }
         //executing SqlQuery

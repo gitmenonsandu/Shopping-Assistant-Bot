@@ -31,7 +31,9 @@ namespace TestBot
                 LUISToSql lReply = new LUISToSql();
                 LuisModelAttribute shoppingModel = new LuisModelAttribute("be32716c-0d3f-4df6-bacf-bf809547d67a", "8e313738104945008db930cb54f355a7");
                 LuisService shoppingService = new LuisService(shoppingModel);
+                
                 LuisResult LuisResponse = await shoppingService.QueryAsync(message.Text);
+                
                 reply = lReply.QueryToData(LuisResponse);
 
                 // return our reply to the user
@@ -50,9 +52,7 @@ namespace TestBot
         {
             if (message.Type == "Ping")
             {
-                Message reply = message.CreateReplyMessage();
-                reply.Type = "Ping";
-                return reply;
+                return message.CreateReplyMessage("Pong");
             }
             else if (message.Type == "DeleteUserData")
             {
@@ -61,18 +61,23 @@ namespace TestBot
             }
             else if (message.Type == "BotAddedToConversation")
             {
+                return message.CreateReplyMessage("Hi there... How can you help you?");
             }
             else if (message.Type == "BotRemovedFromConversation")
             {
+                return message.CreateReplyMessage("Bye.. Have a nice day");
             }
             else if (message.Type == "UserAddedToConversation")
             {
+                return message.CreateReplyMessage("Hi "+message.BotUserData);
             }
             else if (message.Type == "UserRemovedFromConversation")
             {
+                return message.CreateReplyMessage("Bye "+message.BotUserData);
             }
             else if (message.Type == "EndOfConversation")
             {
+                return message.CreateReplyMessage("Bye.. Have a nice day");
             }
 
             return null;
