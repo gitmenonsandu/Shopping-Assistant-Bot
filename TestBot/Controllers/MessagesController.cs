@@ -10,6 +10,7 @@ using Microsoft.Bot.Builder.Luis.Models;
 using TestBot.Controllers;
 using System.Device.Location;
 using GoogleMaps.LocationServices;
+
 namespace TestBot
 {
     [Serializable]
@@ -21,6 +22,7 @@ namespace TestBot
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
         /// </summary>
+        /// 
         public async Task<Message> Post([FromBody]Message message)
         {
             if (message.Type == "Message")
@@ -31,10 +33,17 @@ namespace TestBot
                 LUISToSql lReply = new LUISToSql();
                 LuisModelAttribute shoppingModel = new LuisModelAttribute("be32716c-0d3f-4df6-bacf-bf809547d67a", "8e313738104945008db930cb54f355a7");
                 LuisService shoppingService = new LuisService(shoppingModel);
+
+                //getting current location co-ordinates
+                GoogleLocationService service = new GoogleLocationService(true);
+                MapPoint currentPoint = service.GetLatLongFromAddress("Hyderabad");
                 
+                GeoCoordinate userLocation = new GeoCoordinate(currentPoint.Latitude, currentPoint.Longitude);
+                
+
                 LuisResult LuisResponse = await shoppingService.QueryAsync(message.Text);
                 
-                reply = lReply.QueryToData(LuisResponse);
+                reply = lReply.QueryToData(LuisResponse,userLocation);
 
                 // return our reply to the user
                 if (reply == null)
@@ -61,6 +70,11 @@ namespace TestBot
             }
             else if (message.Type == "BotAddedToConversation")
             {
+                //get user location from api call
+                
+                
+                
+                
                 return message.CreateReplyMessage("Hi there... How can you help you?");
             }
             else if (message.Type == "BotRemovedFromConversation")

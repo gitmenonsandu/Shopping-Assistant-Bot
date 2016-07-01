@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Bot.Builder.Luis.Models;
+using GoogleMaps.LocationServices;
+using System.Device.Location;
 
 namespace TestBot.Controllers
 {
@@ -14,11 +16,13 @@ namespace TestBot.Controllers
         }
         public String SqlQuery, reply;
         //converting LUIS response to SQL query
-        public void initQuery(LuisResult LuisResponse)
+        public void initQuery(LuisResult LuisResponse,GeoCoordinate userLocation)
         {
             string compare = string.Empty;
             string colName = string.Empty;
             List<string> type = new List<string>();
+
+            
 
             if (LuisResponse.Intents.Count > 0 && LuisResponse.Entities.Count > 0)
             {
@@ -92,7 +96,7 @@ namespace TestBot.Controllers
                         else if (costFlag && compare.Length != 0)
                             SqlQuery = SqlQuery + " where itemPrice " + compare + cost.ToString();
 
-                        SqlQuery += ";";
+                        SqlQuery += ";" ;
 
                         break;
                     case "getShop":
@@ -132,9 +136,9 @@ namespace TestBot.Controllers
             //Debug.WriteLine(SqlQuery + " 3hi");
         }
         //executing SqlQuery
-        public string QueryToData(LuisResult LuisQuery)
+        public string QueryToData(LuisResult LuisQuery, GeoCoordinate userLocation)
         {
-            initQuery(LuisQuery);
+            initQuery(LuisQuery,userLocation);
             Debug.WriteLine(SqlQuery);
             if (SqlQuery.Last() != ';')
                 reply = "Sorry. I didnt get that\n";

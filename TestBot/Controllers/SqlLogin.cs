@@ -98,7 +98,7 @@ namespace TestBot.Controllers
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 //Create a data reader and Execute the command
                 MySqlDataReader dataReader = cmd.ExecuteReader();
-
+                
 
                 //Read the data and store them in the list
                 String result="";
