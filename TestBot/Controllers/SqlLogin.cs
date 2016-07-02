@@ -6,7 +6,7 @@ using MySql.Data.MySqlClient;
 using System.Diagnostics;
 using System.Data;
 using System.Threading;
-
+using System.Device.Location;
 namespace TestBot.Controllers
 {
     public class SqlLogin
@@ -35,8 +35,8 @@ namespace TestBot.Controllers
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
             connection = new MySqlConnection(connectionString);
-            
-            
+
+
         }
 
         //open connection to database
@@ -85,12 +85,12 @@ namespace TestBot.Controllers
         }
 
         //Select statement
-        public String Select(string inp)
+        public String Select(string inp, GeoCoordinate userLocation)
         {
             string query = inp;
 
             //Create a list to store the result
-            
+
             //Open connection
             if (this.OpenConnection() == true)
             {
@@ -98,18 +98,32 @@ namespace TestBot.Controllers
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 //Create a data reader and Execute the command
                 MySqlDataReader dataReader = cmd.ExecuteReader();
-                
+
 
                 //Read the data and store them in the list
-                String result="";
-                if(dataReader.HasRows)
+                String result = "";
+                double lat, lon, res;
+                string val;
+                if (dataReader.HasRows)
                 {
-                    while(dataReader.Read())
+                    while (dataReader.Read())
                     {
-                        for (int i = 0; i < dataReader.FieldCount; ++i)
+
+                        for (int i = 0; i < dataReader.FieldCount - 2; ++i)
                         {
-                            result += dataReader.GetValue(i).ToString();
+                            lat = dataReader.GetDouble("lattitude");
+                            lon = dataReader.GetDouble("longitude");
+
+
+                            if ((res=userLocation.GetDistanceTo(new GeoCoordinate(lat, lon))/1000.0 )> 20)
+                            {
+                                Debug.WriteLine(res);
+                                break;
+                            }
+                            val = dataReader.GetValue(i).ToString();
+                            result += val;
                             result += " - ";
+
                         }
                         result += "\n";
                     }

@@ -16,7 +16,7 @@ namespace TestBot.Controllers
         }
         public String SqlQuery, reply;
         //converting LUIS response to SQL query
-        public void initQuery(LuisResult LuisResponse,GeoCoordinate userLocation)
+        public void initQuery(LuisResult LuisResponse)
         {
             string compare = string.Empty;
             string colName = string.Empty;
@@ -30,7 +30,7 @@ namespace TestBot.Controllers
                 {
                     case "itemByPrice":
                     case "itemByCategory":
-                        SqlQuery = "SELECT itemtable.itemName,itemtable.itemPrice,itemtable.itemDiscount, shoptable.shopName,shoptable.shopRating,locationtable.locDesc FROM itemtable JOIN shopitemtable ON itemtable.itemID=shopitemtable.itemID JOIN shoptable ON shoptable.shopID=shopitemtable.shopID JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
+                        SqlQuery = "SELECT itemtable.itemName,itemtable.itemPrice,itemtable.itemDiscount, shoptable.shopName,shoptable.shopRating,locationtable.locDesc,locationtable.lattitude,locationtable.longitude FROM itemtable JOIN shopitemtable ON itemtable.itemID=shopitemtable.itemID JOIN shoptable ON shoptable.shopID=shopitemtable.shopID JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
                         LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
 
                         string regex = "'";
@@ -100,7 +100,7 @@ namespace TestBot.Controllers
 
                         break;
                     case "getShop":
-                        SqlQuery = "SELECT shoptable.shopName,shoptable.shopRating,locationtable.locDesc FROM shoptable JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
+                        SqlQuery = "SELECT shoptable.shopName,shoptable.shopRating,locationtable.locDesc,locationtable.lattitude,locationtable.longitude FROM shoptable JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
                         string shopName = string.Empty;
                         colName = string.Empty;
 
@@ -138,7 +138,7 @@ namespace TestBot.Controllers
         //executing SqlQuery
         public string QueryToData(LuisResult LuisQuery, GeoCoordinate userLocation)
         {
-            initQuery(LuisQuery,userLocation);
+            initQuery(LuisQuery);
             Debug.WriteLine(SqlQuery);
             if (SqlQuery.Last() != ';')
                 reply = "Sorry. I didnt get that\n";
@@ -147,7 +147,7 @@ namespace TestBot.Controllers
 
                 try
                 {
-                    reply = db.Select(SqlQuery);
+                    reply = db.Select(SqlQuery,userLocation);
                 }
                 catch (Exception e)
                 {
