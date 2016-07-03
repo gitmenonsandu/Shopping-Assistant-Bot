@@ -151,6 +151,7 @@ namespace TestBot.Controllers
                 }
                 catch (Exception e)
                 {
+                    Debug.WriteLine(e.Message);
                     reply = "Sorry. I didnt get that\n";
                 }
             }
