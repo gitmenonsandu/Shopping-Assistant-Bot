@@ -13,7 +13,7 @@ namespace TestBot.Controllers
     {
         public LUISToSql()
         {
-               
+                  
         }
         public String SqlQuery, reply;
         //converting LUIS response to SQL query
@@ -152,7 +152,6 @@ namespace TestBot.Controllers
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e.Message);
                     reply = "Sorry. I didnt get that\n";
                 }
             }
