@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Bot.Builder.Luis.Models;
 using GoogleMaps.LocationServices;
 using System.Device.Location;
+using Microsoft.Bot.Builder.Luis;
 
 namespace TestBot.Controllers
 {
@@ -12,7 +13,7 @@ namespace TestBot.Controllers
     {
         public LUISToSql()
         {
-
+               
         }
         public String SqlQuery, reply;
         //converting LUIS response to SQL query

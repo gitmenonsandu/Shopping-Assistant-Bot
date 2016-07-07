@@ -6,7 +6,7 @@ using MySql.Data.MySqlClient;
 using System.Diagnostics;
 using System.Data;
 using System.Threading;
-using System.Device.Location;
+using System.Device.Location; 
 namespace TestBot.Controllers
 {
     public class SqlLogin
