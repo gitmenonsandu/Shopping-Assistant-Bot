@@ -102,8 +102,7 @@ namespace TestBot.Controllers
                         break;
                     case "getShop":
                         SqlQuery = "SELECT shoptable.shopName,shoptable.shopRating,locationtable.locDesc,locationtable.lattitude,locationtable.longitude FROM shoptable JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
-                        string shopName = string.Empty;
-                        colName = string.Empty;
+                        
 
                         LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
                         regex = "'";
@@ -120,6 +119,45 @@ namespace TestBot.Controllers
                             regex = regex.Remove(regex.Length - 1);
                             regex += "'";
                             SqlQuery = SqlQuery + " where lower(shopName) REGEXP " + regex + " or lower(shopCategory) REGEXP " + regex;
+                        }
+                        SqlQuery += ";";
+                        break;
+                    case "getMovie":
+                        SqlQuery= "SELECT movietable.movieName,movietable.movieRating,movietable.movieCast,malltable.mallName,locationtable.locDesc,locationtable.lattitude,locationtable.longitude from movietable join mallmovietable on mallmovietable.movieID = movietable.movieID join malltable on malltable.mallID = mallmovietable.mallID JOIN mallloctable on mallloctable.mallID = malltable.mallID join locationtable on locationtable.locID = mallloctable.locID ";
+                        LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
+                        string mallName = "'";
+                        regex = "'";
+
+                        for(int i=0;i<LuisResponse.Entities.Count;++i) 
+                        {
+                            if(LuisResponse.Entities[i].Type.Equals("movie::name") || LuisResponse.Entities[i].Type.Contains("builtin.encyclopedia"))
+                            {
+                                regex = regex + LuisResponse.Entities[i].Entity.ToLower();
+                                regex += "|";
+                            }
+                            else if(LuisResponse.Entities[i].Type.Equals("mallName"))
+                            {
+                                mallName += LuisResponse.Entities[i].Entity.ToLower();
+                                mallName += "|";
+                            }  
+                        }
+                        if (regex.Length != 1)
+                        {
+                            regex = regex.Remove(regex.Length - 1);
+                            regex += "'";
+                            SqlQuery = SqlQuery + " where (lower(movieName) REGEXP " + regex + " or lower(movieDirector) REGEXP " + regex+ " or lower(movieCast) REGEXP " + regex+")";
+                            if (mallName.Length != 1)
+                            {
+                                mallName = mallName.Remove(mallName.Length - 1);
+                                mallName += "'";
+                                SqlQuery = SqlQuery + " and lower(mallName) REGEXP " + mallName;
+                            }
+                        }
+                        else if (mallName.Length != 1)
+                        {
+                            mallName = mallName.Remove(mallName.Length - 1);
+                            mallName += "'";
+                            SqlQuery = SqlQuery + " where lower(mallName) REGEXP " + mallName;
                         }
                         SqlQuery += ";";
                         break;
@@ -152,6 +190,7 @@ namespace TestBot.Controllers
                 }
                 catch (Exception e)
                 {
+                    Debug.Write(e.Message);
                     reply = "Sorry. I didnt get that\n";
                 }
             }

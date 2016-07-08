@@ -35,7 +35,7 @@ namespace TestBot
                 LuisService shoppingService = new LuisService(shoppingModel);
 
                 //getting current location co-ordinates
-                GoogleLocationService service = new GoogleLocationService(true);
+                GoogleLocationService service = new GoogleLocationService();
                 MapPoint currentPoint = service.GetLatLongFromAddress("Hyderabad");
                 
                 GeoCoordinate userLocation = new GeoCoordinate(currentPoint.Latitude, currentPoint.Longitude);

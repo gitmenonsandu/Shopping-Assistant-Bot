@@ -26,6 +26,8 @@ namespace TestBot.Controllers
         //Initialize values
         private void Initialize()
         {
+            //bluemix credential
+            
             server = "us-cdbr-iron-east-04.cleardb.net";
             database = "ad_5cf43fc752d1963  ";
             uid = "ba4180b80f1d1a";
@@ -33,7 +35,18 @@ namespace TestBot.Controllers
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
+            
 
+            //localhost credential
+            /*
+            server = "localhost";
+            database = "shoppingmall  ";
+            uid = "root";
+            password = "1234";
+            string connectionString;
+            connectionString = "SERVER=" + server + ";" + "DATABASE=" +
+            database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
+            */
             connection = new MySqlConnection(connectionString);
 
 
@@ -104,23 +117,30 @@ namespace TestBot.Controllers
                 String result = "";
                 double lat, lon, res;
                 string val;
+                bool oneTime;
                 if (dataReader.HasRows)
                 {
                     while (dataReader.Read())
                     {
-
+                        oneTime = true;
                         for (int i = 0; i < dataReader.FieldCount - 2; ++i)
                         {
                             lat = dataReader.GetDouble("lattitude");
                             lon = dataReader.GetDouble("longitude");
 
-
-                            if ((res=userLocation.GetDistanceTo(new GeoCoordinate(lat, lon))/1000.0 )> 20)
+                            
+                            if (oneTime)
                             {
-                                Debug.WriteLine(res);
-                                break;
+                                if ((res = userLocation.GetDistanceTo(new GeoCoordinate(lat, lon)) / 1000.0) > 20)
+                                {
+                                    Debug.WriteLine(res);
+                                    break;
+                                }
                             }
+                            
+                            oneTime = false;
                             val = dataReader.GetValue(i).ToString();
+                            
                             result += val;
                             result += " - ";
 
