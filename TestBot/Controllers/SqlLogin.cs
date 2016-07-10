@@ -29,9 +29,9 @@ namespace TestBot.Controllers
             //bluemix credential
             
             server = "us-cdbr-iron-east-04.cleardb.net";
-            database = "ad_5cf43fc752d1963  ";
-            uid = "ba4180b80f1d1a";
-            password = "fc43a0b1";
+            database = "ad_d50e86b971b02f2";
+            uid = "bf87fb0cec2402";
+            password = "60fcb38d";
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
