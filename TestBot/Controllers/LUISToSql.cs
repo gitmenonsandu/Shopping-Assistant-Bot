@@ -26,12 +26,12 @@ namespace TestBot.Controllers
             
 
             if (LuisResponse.Intents.Count > 0 && LuisResponse.Entities.Count > 0)
-            {
+            {   
                 switch (LuisResponse.Intents[0].Intent)
                 {
                     case "itemByPrice":
                     case "itemByCategory":
-                        SqlQuery = "SELECT itemtable.itemName,itemtable.itemPrice,itemtable.itemDiscount, shoptable.shopName,shoptable.shopRating,locationtable.locDesc,locationtable.lattitude,locationtable.longitude FROM itemtable JOIN shopitemtable ON itemtable.itemID=shopitemtable.itemID JOIN shoptable ON shoptable.shopID=shopitemtable.shopID JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
+                        SqlQuery = "SELECT itemtable.itemName,itemtable.itemPrice,itemtable.itemDiscount, shoptable.shopName,shoptable.shopRating,locationtable.locDesc,locationtable.latitude,locationtable.longitude FROM itemtable JOIN shopitemtable ON itemtable.itemID=shopitemtable.itemID JOIN shoptable ON shoptable.shopID=shopitemtable.shopID JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
                         LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
 
                         string regex = "'";
@@ -101,7 +101,7 @@ namespace TestBot.Controllers
 
                         break;
                     case "getShop":
-                        SqlQuery = "SELECT shoptable.shopName,shoptable.shopRating,locationtable.locDesc,locationtable.lattitude,locationtable.longitude FROM shoptable JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
+                        SqlQuery = "SELECT shoptable.shopName,shoptable.shopRating,locationtable.locDesc,locationtable.latitude,locationtable.longitude FROM shoptable JOIN shoploctable ON shoptable.shopID=shoploctable.shopID JOIN locationtable ON shoploctable.locID=locationtable.locID";
                         
 
                         LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
@@ -123,7 +123,7 @@ namespace TestBot.Controllers
                         SqlQuery += ";";
                         break;
                     case "getMovie":
-                        SqlQuery= "SELECT movietable.movieName,movietable.movieRating,movietable.movieCast,malltable.mallName,locationtable.locDesc,locationtable.lattitude,locationtable.longitude from movietable join mallmovietable on mallmovietable.movieID = movietable.movieID join malltable on malltable.mallID = mallmovietable.mallID JOIN mallloctable on mallloctable.mallID = malltable.mallID join locationtable on locationtable.locID = mallloctable.locID ";
+                        SqlQuery= "SELECT movietable.movieName,movietable.movieRating,movietable.movieCast,malltable.mallName,locationtable.locDesc,locationtable.latitude,locationtable.longitude from movietable join mallmovietable on mallmovietable.movieID = movietable.movieID join malltable on malltable.mallID = mallmovietable.mallID JOIN mallloctable on mallloctable.mallID = malltable.mallID join locationtable on locationtable.locID = mallloctable.locID ";
                         LuisResponse.Entities = LuisResponse.Entities.OrderBy(x => x.StartIndex).ToList();
                         string mallName = "'";
                         regex = "'";

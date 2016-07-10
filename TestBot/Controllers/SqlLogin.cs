@@ -125,7 +125,7 @@ namespace TestBot.Controllers
                         oneTime = true;
                         for (int i = 0; i < dataReader.FieldCount - 2; ++i)
                         {
-                            lat = dataReader.GetDouble("lattitude");
+                            lat = dataReader.GetDouble("latitude");
                             lon = dataReader.GetDouble("longitude");
 
                             
